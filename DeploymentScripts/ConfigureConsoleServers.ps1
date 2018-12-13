@@ -1,25 +1,7 @@
 
-# Version 1.0  Configure Web Server
+# Version 1.0  Configure Console Servers for Access
 
-# Sleep as extension has a habit of starting a little too quick.
 Start-Sleep -Seconds 30
-
-
-#Install IIS
-Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole -All -LimitAccess
-
-#Configure custom IIS default page
-$sysinfo = @()
-$IPAddress = (Get-NetIPAddress -InterfaceAlias Ethernet | ?{$_.AddressFamily -eq 'IPv4'}).IPAddress
-
-$sysinfo = [pscustomobject]@{
-
-Computername = $env:COMPUTERNAME
-IPAddress = $IPAddress
-
-}
-
-$sysinfo | ConvertTo-Html | Out-File C:\inetpub\wwwroot\iisstart.htm
 
 #Disable Firewall
 Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
