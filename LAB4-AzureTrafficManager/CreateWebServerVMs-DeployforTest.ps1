@@ -10,7 +10,7 @@ $templateparameterFile2 = '.\CreateWebServerVM2_Parameters.json'
 Import-Module AzureRM.Resources
 
 #  login
-#Login-AzureRmAccount
+Login-AzureRmAccount
 
 # create the resource from the template - pass names as parameters
 New-AzureRmResourceGroup -Location "East US" -Name $WebServergName1

@@ -25,7 +25,7 @@
     },
     "_artifactsLocation": {
       "type": "string",
-      "defaultValue": "https://networkessentialsscripts.blob.core.windows.net/netessentialsblob"
+      "defaultValue": "https://github.com/billcurtis/AzureNetEssentials1.0/blob/aa87abe7ac96b12cece5357e435ff3f3443c55bf/DeploymentScripts"
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
@@ -33,7 +33,7 @@
     },
     "vmNamePrefix": {
       "type": "string",
-      "defaultValue": "TMWebServer",
+      "defaultValue": "BkEndWebSrv",
       "metadata": {
         "description": "VM name prefix"
       }
