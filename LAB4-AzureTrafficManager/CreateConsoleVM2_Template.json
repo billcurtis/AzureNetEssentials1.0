@@ -126,7 +126,7 @@
         "count": "[parameters('numberOfInstances')]"
       },
       "dependsOn": [
-        "[concat(parameters('vmNamePrefix'), copyindex(1))]"
+        "[concat(parameters('vmNamePrefix'), copyindex(2))]"
       ],
       "properties": {
           "publisher": "Microsoft.Compute",
