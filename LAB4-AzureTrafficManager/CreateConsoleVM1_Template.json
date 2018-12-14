@@ -116,6 +116,26 @@
       }
     },
     {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmNamePrefix'),copyindex(1),'/', 'BGInfo')]",
+      "location": "[parameters('location')]",
+       "copy": {
+        "name": "bgInfoLoop",
+        "count": "[parameters('numberOfInstances')]"
+      },
+      "dependsOn": [
+        "[concat(parameters('vmNamePrefix'), copyindex(1))]"
+      ],
+      "properties": {
+          "publisher": "Microsoft.Compute",
+          "type": "BGInfo",
+          "typeHandlerVersion": "2.1",
+          "settings": {},
+          "protectedSettings": null
+      }
+  },
+    {
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
       "apiVersion": "2016-03-30",
