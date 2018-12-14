@@ -25,7 +25,7 @@
     },
     "_artifactsLocation": {
       "type": "string",
-      "defaultValue": "https://github.com/billcurtis/AzureNetEssentials1.0/blob/development/DeploymentScripts/"
+      "defaultValue": "https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/development/DeploymentScripts/"
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
