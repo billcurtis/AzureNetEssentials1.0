@@ -16,7 +16,7 @@
     },
     "numberOfInstances": {
       "type": "int",
-      "defaultValue": 1,
+      "defaultValue": 2,
       "minValue": 1,
       "maxValue": 5,
       "metadata": {
@@ -54,15 +54,27 @@
     }
   },
   "variables": {
-    "virtualNetworkName": "consoleEastNet",
-    "publicIPAddressName": "mypubicip",
-    "publicIPAddressType": "Dynamic",
+    "vmLocations": [
+        "West US",
+        "East US 2"
+    ],
+    "vNetNames": [
+        "vNetConWest",
+        "vNetConEast"
+    ],
+    "vNetAddressPrefixes": [
+        "15.0.0.0/16",
+        "16.0.0.0/16"
+    ],
+    "vNetSubnets": [
+        "15.0.0.0/24",
+        "16.0.0.0/24"
+    ],
+    "vNetSubnetNames": [
+        "WestSubnet-1",
+        "EastSubnet-1"
+    ],
     "namingInfix": "[toLower(concat( 'net', uniqueString(resourceGroup().id), 'pip' ))]",
-    "longNamingInfix": "[toLower(parameters('vmNamePrefix'))]",
-    "addressPrefix": "15.0.0.0/16",
-    "subnet1Name": "Subnet-1",
-    "subnet1Prefix": "15.0.0.0/24",
-    "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets',variables('virtualNetworkName'),variables('subnet1Name'))]",
     "scriptFolder": ".",
     "scriptFileName": "ConfigureConsoleServers.ps1",
     "Windows": {
@@ -78,7 +90,7 @@
       "apiVersion": "2017-06-01",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[concat(variables('namingInfix'), 'pip', copyindex(1))]",
-      "location": "[parameters('location')]",
+      "location": "[variables('vmLocations')[copyIndex()]]",
       "copy": {
         "name": "vipLoop",
         "count": "[parameters('numberOfInstances')]"
@@ -94,7 +106,7 @@
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmNamePrefix'),copyindex(1),'/', 'extensionName')]",
       "apiVersion": "2015-06-15",
-      "location": "[parameters('location')]",
+      "location": "[variables('vmLocations')[copyIndex()]]",
       "copy": {
         "name": "virtualMachineLoop",
         "count": "[parameters('numberOfInstances')]"
@@ -119,7 +131,7 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmNamePrefix'),copyindex(1),'/', 'BGInfo')]",
-      "location": "[parameters('location')]",
+      "location": "[variables('vmLocations')[copyIndex()]]",
        "copy": {
         "name": "bgInfoLoop",
         "count": "[parameters('numberOfInstances')]"
@@ -137,20 +149,24 @@
   },
     {
       "type": "Microsoft.Network/virtualNetworks",
-      "name": "[variables('virtualNetworkName')]",
+      "name": "[variables('vNetNames')[copyIndex()]]",
       "apiVersion": "2016-03-30",
-      "location": "[parameters('location')]",
+      "location": "[variables('vmLocations')[copyIndex()]]",
+      "copy": {
+        "name": "vNetLoop",
+        "count": "[parameters('numberOfInstances')]"
+      },
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
-            "[variables('addressPrefix')]"
+            "[variables('vNetAddressPrefixes')[copyIndex()]]"
           ]
         },
         "subnets": [
           {
-            "name": "[variables('subnet1Name')]",
+            "name": "[variables('vNetSubnetNames')[copyIndex()]]",
             "properties": {
-              "addressPrefix": "[variables('subnet1Prefix')]"
+              "addressPrefix":  "[variables('vNetSubnets')[copyIndex()]]"
             }
           }
         ]
@@ -160,13 +176,13 @@
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[concat('nic', copyindex(1))]",
       "apiVersion": "2016-03-30",
-      "location": "[parameters('location')]",
+      "location": "[variables('vmLocations')[copyIndex()]]",
       "copy": {
         "name": "nicLoop",
         "count": "[parameters('numberOfInstances')]"
       },
       "dependsOn": [
-        "[variables('virtualNetworkName')]"
+        "[variables('vNetNames')[copyIndex()]]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -175,7 +191,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('subnet1Ref')]"
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',variables('vNetNames')[copyIndex()],variables('vNetSubnetNames')[copyIndex()])]"
               },
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(variables('NamingInfix'), 'pip', copyindex(1)))]"
@@ -189,7 +205,7 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(parameters('vmNamePrefix'), copyIndex(1))]",
       "apiVersion": "2016-04-30-preview",
-      "location": "[parameters('location')]",
+      "location": "[variables('vmLocations')[copyIndex()]]",
       "copy": {
         "name": "virtualMachineLoop",
         "count": "[parameters('numberOfInstances')]"
