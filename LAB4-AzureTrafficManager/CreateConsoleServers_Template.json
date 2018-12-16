@@ -215,7 +215,7 @@
       ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "Standard_D4_v3"
+          "vmSize": "Standard_D2_v3"
         },
         "osProfile": {
           "computerName": "[concat('ConsoleSrv', copyIndex(1))]",
