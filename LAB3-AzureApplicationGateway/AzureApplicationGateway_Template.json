@@ -71,7 +71,7 @@
     "Windows": {
       "publisher": "MicrosoftWindowsServer",
       "offer": "WindowsServer",
-      "sku": "2016-Datacenter",
+      "sku": "2019-Datacenter",
       "version": "latest"
     },
     "imageReference": "[variables(parameters('OS'))]"
@@ -90,7 +90,7 @@
     },
 {
    "type": "Microsoft.Compute/virtualMachines/extensions",
-   "name": "[concat(parameters('vmNamePrefix'),copyindex(),'/', 'extensionName')]",
+   "name": "[concat(parameters('vmNamePrefix'),copyindex(1),'/', 'extensionName')]",
    "apiVersion": "2015-06-15",
    "location": "[parameters('location')]",
      "copy": {
@@ -181,7 +181,7 @@
           "vmSize": "Standard_D2_v3"
         },
         "osProfile": {
-          "computerName": "[concat('BkEndWebSrv', copyIndex())]",
+          "computerName": "[concat('BkEndWebSrv', copyIndex(1))]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
