@@ -61,7 +61,7 @@
     "virtualNetworkName": "backEndEastNet",
     "publicIPAddressName": "mypubicip",
     "publicIPAddressType": "Dynamic",
-    "namingInfix": "[toLower(concat( 'net', uniqueString(resourceGroup().id), 'pip' ))]",
+    "namingInfix": "[toLower(concat( 'EASTWEB-', uniqueString(resourceGroup().id), 'pip' ))]",
     "longNamingInfix": "[toLower(parameters('vmNamePrefix'))]",
     "addressPrefix": "10.0.0.0/16",
     "subnet1Name": "Subnet-1",
