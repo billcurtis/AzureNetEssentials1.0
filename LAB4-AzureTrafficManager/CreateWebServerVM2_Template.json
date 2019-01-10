@@ -33,7 +33,7 @@
     },
     "vmNamePrefix": {
       "type": "string",
-      "defaultValue": "BkEndWebSrv",
+      "defaultValue": "WestWebSrv",
       "metadata": {
         "description": "VM name prefix"
       }
@@ -187,7 +187,7 @@
           "vmSize": "Standard_D2_v3"
         },
         "osProfile": {
-          "computerName": "[concat('BkEndWebSrv', copyindex(2))]",
+          "computerName": "[concat('WestWebSrv', copyindex(2))]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
