@@ -10,7 +10,7 @@ Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole -All -Limit
 
 #Configure custom IIS default page
 $sysinfo = @()
-$IPAddress = (Get-NetIPAddress -InterfaceAlias Ethernet | ?{$_.AddressFamily -eq 'IPv4'}).IPAddress
+$IPAddress = (Get-NetIPAddress -InterfaceAlias Ethernet | Where-Object {$_.AddressFamily -eq 'IPv4'}).IPAddress
 
 $sysinfo = [pscustomobject]@{
 
@@ -32,4 +32,8 @@ $AdminKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A
 $UserKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}"
 Set-ItemProperty -Path $AdminKey -Name "IsInstalled" -Value 0
 Set-ItemProperty -Path $UserKey -Name "IsInstalled" -Value 0
+
+#Enable RDP
+$RDPRegPath = 'HKLM:\System\CurrentControlSet\Control\Terminal Server'
+set-ItemProperty -Path $RDPRegPath -name "fDenyTSConnections" -Value 0
 

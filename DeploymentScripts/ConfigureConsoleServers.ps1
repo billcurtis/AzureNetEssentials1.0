@@ -15,3 +15,6 @@ $UserKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8
 Set-ItemProperty -Path $AdminKey -Name "IsInstalled" -Value 0
 Set-ItemProperty -Path $UserKey -Name "IsInstalled" -Value 0 #>
 
+#Enable RDP
+$RDPRegPath = 'HKLM:\System\CurrentControlSet\Control\Terminal Server'
+set-ItemProperty -Path $RDPRegPath -name "fDenyTSConnections" -Value 0
