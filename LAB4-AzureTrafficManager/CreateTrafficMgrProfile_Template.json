@@ -4,7 +4,7 @@
     
     "variables": {
         "webAppLocations": [
-            "West US 2",
+            "West US",
             "East US"
         ],
         "webAppPrefix": [
