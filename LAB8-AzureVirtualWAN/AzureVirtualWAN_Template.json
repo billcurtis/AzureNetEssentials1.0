@@ -18,7 +18,10 @@
             "type": "int",
             "defaultValue": 2,
             "minValue": 1,
-            "maxValue": 5
+            "maxValue": 5,
+            "metadata": {
+                "description": "Number of VMs to deploy, limit 5 since this sample is using a single storage account"
+            }
         },
         "_artifactsLocation": {
             "type": "string",
@@ -27,6 +30,13 @@
         "_artifactsLocationSasToken": {
             "type": "securestring",
             "defaultValue": ""
+        },
+        "vmNamePrefix": {
+            "type": "string",
+            "defaultValue": "Server",
+            "metadata": {
+                "description": "VM name prefix"
+            }
         },
         "OS": {
             "type": "string",
@@ -38,39 +48,38 @@
                 "description": "OS Platform for the VM"
             }
         },
-        "vmNames": {
-            "type": "array",
-            "defaultValue": [
-                "vmPublic",
-                "vmPrivate"
-            ]
-        },
-        "NIC": {
-            "type": "array",
-            "defaultValue": [
-                "NIC1",
-                "NIC2"
-            ]
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
         }
     },
     "variables": {
-        "vmLocation": "East US",
-        "vNetName": "vNet1",
-        "vNetAddressPrefix": "10.0.0.0/16",
+        "vmLocations": [
+            "West US 2",
+            "East US 2"
+        ],
+        "vNetNames": [
+            "vNetConWest",
+            "vNetConEast"
+        ],
+        "vNetAddressPrefixes": [
+            "15.0.0.0/16",
+            "16.0.0.0/16"
+        ],
         "vNetSubnets": [
-            "10.0.0.0/24",
-            "10.0.1.0/24"
+            "15.0.0.0/24",
+            "16.0.0.0/24"
         ],
         "vNetSubnetNames": [
-            "Public",
-            "Private"
+            "WestSubnet-1",
+            "EastSubnet-1"
         ],
         "scriptFolder": ".",
-        "scriptFileName": "ConfigureWebServers.ps1",
+        "scriptFileName": "ConfigureConsoleServers.ps1",
         "Windows": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "2019-Datacenter",
+            "publisher": "MicrosoftWindowsDesktop",
+            "offer": "Windows-10",
+            "sku": "rs4-pro",
             "version": "latest"
         },
         "imageReference": "[variables(parameters('OS'))]"
@@ -78,15 +87,15 @@
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vmNames')[copyindex()],'/extensionName')]",
+            "name": "[concat(parameters('vmNamePrefix'),copyindex(1),'/', 'extensionName')]",
             "apiVersion": "2015-06-15",
-            "location": "[variables('vmLocation')]",
+            "location": "[variables('vmLocations')[copyIndex()]]",
             "copy": {
                 "name": "virtualMachineLoop",
                 "count": "[parameters('numberOfInstances')]"
             },
             "dependsOn": [
-                "[concat(parameters('vmNames')[copyindex()])]"
+                "[concat(parameters('vmNamePrefix'), copyindex(1))]"
             ],
             "properties": {
                 "publisher": "Microsoft.Compute",
@@ -104,14 +113,14 @@
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vmNames')[copyindex()],'/BGInfo')]",
-            "location": "[variables('vmLocation')]",
+            "name": "[concat(parameters('vmNamePrefix'),copyindex(1),'/', 'BGInfo')]",
+            "location": "[variables('vmLocations')[copyIndex()]]",
             "copy": {
                 "name": "bgInfoLoop",
                 "count": "[parameters('numberOfInstances')]"
             },
             "dependsOn": [
-                "[concat(parameters('vmNames')[copyindex()])]"
+                "[concat(parameters('vmNamePrefix'), copyindex(1))]"
             ],
             "properties": {
                 "publisher": "Microsoft.Compute",
@@ -124,26 +133,24 @@
         },
         {
             "type": "Microsoft.Network/virtualNetworks",
-            "name": "[variables('vNetName')]",
+            "name": "[variables('vNetNames')[copyIndex()]]",
             "apiVersion": "2016-03-30",
-            "location": "[variables('vmLocation')]",
+            "location": "[variables('vmLocations')[copyIndex()]]",
+            "copy": {
+                "name": "vNetLoop",
+                "count": "[parameters('numberOfInstances')]"
+            },
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "[variables('vNetAddressPrefix')]"
+                        "[variables('vNetAddressPrefixes')[copyIndex()]]"
                     ]
                 },
                 "subnets": [
                     {
-                        "name": "[variables('vNetSubnetNames')[0]]",
+                        "name": "[variables('vNetSubnetNames')[copyIndex()]]",
                         "properties": {
-                            "addressPrefix": "[variables('vNetSubnets')[0]]"
-                        }
-                    },
-                    {
-                        "name": "[variables('vNetSubnetNames')[1]]",
-                        "properties": {
-                            "addressPrefix": "[variables('vNetSubnets')[1]]"
+                            "addressPrefix": "[variables('vNetSubnets')[copyIndex()]]"
                         }
                     }
                 ]
@@ -151,15 +158,15 @@
         },
         {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(parameters('NIC')[copyindex()])]",
+            "name": "[concat('nic', copyindex(1))]",
             "apiVersion": "2016-03-30",
-            "location": "[variables('vmLocation')]",
+            "location": "[variables('vmLocations')[copyIndex()]]",
             "copy": {
                 "name": "nicLoop",
                 "count": "[parameters('numberOfInstances')]"
             },
             "dependsOn": [
-                "[variables('vNetName')]"
+                "[variables('vNetNames')[copyIndex()]]"
             ],
             "properties": {
                 "ipConfigurations": [
@@ -168,7 +175,7 @@
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',variables('vNetName'),variables('vNetSubnetNames')[copyIndex()])]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',variables('vNetNames')[copyIndex()],variables('vNetSubnetNames')[copyIndex()])]"
                             }
                         }
                     }
@@ -177,9 +184,9 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('vmNames')[copyIndex()])]",
+            "name": "[concat(parameters('vmNamePrefix'), copyIndex(1))]",
             "apiVersion": "2016-04-30-preview",
-            "location": "[variables('vmLocation')]",
+            "location": "[variables('vmLocations')[copyIndex()]]",
             "copy": {
                 "name": "virtualMachineLoop",
                 "count": "[parameters('numberOfInstances')]"
@@ -192,7 +199,7 @@
                     "vmSize": "Standard_D2_v3"
                 },
                 "osProfile": {
-                    "computerName": "[concat(parameters('vmNames')[copyIndex()])]",
+                    "computerName": "[concat('Server', copyIndex(1))]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]"
                 },
@@ -205,7 +212,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('NIC', copyindex(1)))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nic', copyindex(1)))]"
                         }
                     ]
                 }
