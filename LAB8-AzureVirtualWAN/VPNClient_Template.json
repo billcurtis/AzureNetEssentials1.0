@@ -33,7 +33,7 @@
         },
         "vmNamePrefix": {
             "type": "string",
-            "defaultValue": "Server",
+            "defaultValue": "VPNClient",
             "metadata": {
                 "description": "VM name prefix"
             }
@@ -54,37 +54,47 @@
         }
     },
     "variables": {
-        "vmLocations": [
-            "East US 2"
-        ],
-        "vNetNames": [
-            "vNetConEast"
-        ],
-        "vNetAddressPrefixes": [
-            "16.0.0.0/16"
-        ],
-        "vNetSubnets": [
-            "16.0.0.0/24"
-        ],
-        "vNetSubnetNames": [
-            "EastSubnet-1"
-        ],
+        "virtualNetworkName": "WestNet",
+        "publicIPAddressName": "mypubicip",
+        "publicIPAddressType": "Dynamic",
+        "namingInfix": "[toLower(concat( 'pubip-', uniqueString(resourceGroup().id), 'pip' ))]",
+        "longNamingInfix": "[toLower(parameters('vmNamePrefix'))]",
+        "addressPrefix": "15.0.0.0/16",
+        "subnet1Name": "Subnet1",
+        "subnet1Prefix": "15.0.0.0/24",
+        "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets',variables('virtualNetworkName'),variables('subnet1Name'))]",
         "scriptFolder": ".",
-        "scriptFileName": "ConfigureConsoleServers.ps1",
+        "scriptFileName": "ConfigureWebServers.ps1",
         "Windows": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "2019-Datacenter",
+            "publisher": "MicrosoftWindowsDesktop",
+            "offer": "Windows-10",
+            "sku": "19h2-pro",
             "version": "latest"
         },
         "imageReference": "[variables(parameters('OS'))]"
     },
     "resources": [
         {
+            "apiVersion": "2017-06-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[concat(variables('namingInfix'), 'pip', copyindex(1))]",
+            "location": "[parameters('location')]",
+            "copy": {
+                "name": "vipLoop",
+                "count": "[parameters('numberOfInstances')]"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[concat(variables('namingInfix'), 'pip', copyindex(1))]"
+                }
+            }
+        },
+        {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('vmNamePrefix'),copyindex(1),'/', 'extensionName')]",
             "apiVersion": "2015-06-15",
-            "location": "[variables('vmLocations')[copyIndex()]]",
+            "location": "[parameters('location')]",
             "copy": {
                 "name": "virtualMachineLoop",
                 "count": "[parameters('numberOfInstances')]"
@@ -106,46 +116,21 @@
             }
         },
         {
-            "apiVersion": "2015-06-15",
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vmNamePrefix'),copyindex(1),'/', 'BGInfo')]",
-            "location": "[variables('vmLocations')[copyIndex()]]",
-            "copy": {
-                "name": "bgInfoLoop",
-                "count": "[parameters('numberOfInstances')]"
-            },
-            "dependsOn": [
-                "[concat(parameters('vmNamePrefix'), copyindex(1))]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.Compute",
-                "type": "BGInfo",
-                "typeHandlerVersion": "2.1",
-                "settings": {
-                },
-                "protectedSettings": null
-            }
-        },
-        {
             "type": "Microsoft.Network/virtualNetworks",
-            "name": "[variables('vNetNames')[copyIndex()]]",
+            "name": "[variables('virtualNetworkName')]",
             "apiVersion": "2016-03-30",
-            "location": "[variables('vmLocations')[copyIndex()]]",
-            "copy": {
-                "name": "vNetLoop",
-                "count": "[parameters('numberOfInstances')]"
-            },
+            "location": "[parameters('location')]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "[variables('vNetAddressPrefixes')[copyIndex()]]"
+                        "[variables('addressPrefix')]"
                     ]
                 },
                 "subnets": [
                     {
-                        "name": "[variables('vNetSubnetNames')[copyIndex()]]",
+                        "name": "[variables('subnet1Name')]",
                         "properties": {
-                            "addressPrefix": "[variables('vNetSubnets')[copyIndex()]]"
+                            "addressPrefix": "[variables('subnet1Prefix')]"
                         }
                     }
                 ]
@@ -155,13 +140,13 @@
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat('nic', copyindex(1))]",
             "apiVersion": "2016-03-30",
-            "location": "[variables('vmLocations')[copyIndex()]]",
+            "location": "[parameters('location')]",
             "copy": {
                 "name": "nicLoop",
                 "count": "[parameters('numberOfInstances')]"
             },
             "dependsOn": [
-                "[variables('vNetNames')[copyIndex()]]"
+                "[variables('virtualNetworkName')]"
             ],
             "properties": {
                 "ipConfigurations": [
@@ -170,7 +155,10 @@
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',variables('vNetNames')[copyIndex()],variables('vNetSubnetNames')[copyIndex()])]"
+                                "id": "[variables('subnet1Ref')]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat(variables('NamingInfix'), 'pip', copyindex(1)))]"
                             }
                         }
                     }
@@ -181,7 +169,7 @@
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(parameters('vmNamePrefix'), copyIndex(1))]",
             "apiVersion": "2016-04-30-preview",
-            "location": "[variables('vmLocations')[copyIndex()]]",
+            "location": "[parameters('location')]",
             "copy": {
                 "name": "virtualMachineLoop",
                 "count": "[parameters('numberOfInstances')]"
@@ -194,7 +182,7 @@
                     "vmSize": "Standard_D2_v3"
                 },
                 "osProfile": {
-                    "computerName": "[concat('Server', copyIndex(1))]",
+                    "computerName": "[concat('VPNClient', copyIndex(1))]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]"
                 },

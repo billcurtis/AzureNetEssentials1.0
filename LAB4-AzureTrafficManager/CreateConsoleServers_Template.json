@@ -78,9 +78,9 @@
     "scriptFolder": ".",
     "scriptFileName": "ConfigureConsoleServers.ps1",
     "Windows": {
-      "publisher": "MicrosoftWindowsDesktop",
-      "offer": "Windows-10",
-      "sku": "rs4-pro",
+      "publisher": "MicrosoftWindowsServer",
+      "offer": "WindowsServer",
+      "sku": "2019-Datacenter",
       "version": "latest"
     },
     "imageReference": "[variables(parameters('OS'))]"
