@@ -27,6 +27,6 @@ $p2sClientPrivateKeyPath = (New-Item 'C:\Users\All Users\Desktop\VPNCertificates
 $rootCertPath = (New-Item 'C:\Users\All Users\Desktop\VPNCertificates\RootCert.txt' -ItemType File -Force).FullName
 
 # Populate Content of Cert Files
-Set-Content -Value ((Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/development/DeploymentScripts/Artifacts/P2SClientCertificate.txt' -UseBasicParsing).Content) -LiteralPath $p2sClientCertPath -Force
-Set-Content -Value ((Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/development/DeploymentScripts/Artifacts/P2SClientPrivateKey.txt' -UseBasicParsing).Content) -LiteralPath $p2sClientPrivateKeyPath -Force
-Set-Content -Value ((Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/development/DeploymentScripts/Artifacts/RootCert.txt' -UseBasicParsing).Content) -LiteralPath $rootCertPath -Force
+Set-Content -Value ((Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/master/DeploymentScripts/Artifacts/P2SClientCertificate.txt' -UseBasicParsing).Content) -LiteralPath $p2sClientCertPath -Force
+Set-Content -Value ((Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/master/DeploymentScripts/Artifacts/P2SClientPrivateKey.txt' -UseBasicParsing).Content) -LiteralPath $p2sClientPrivateKeyPath -Force
+Set-Content -Value ((Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/master/DeploymentScripts/Artifacts/RootCert.txt' -UseBasicParsing).Content) -LiteralPath $rootCertPath -Force
