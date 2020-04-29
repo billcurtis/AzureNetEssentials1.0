@@ -15,7 +15,7 @@ $RDPRegPath = 'HKLM:\System\CurrentControlSet\Control\Terminal Server'
 set-ItemProperty -Path $RDPRegPath -name "fDenyTSConnections" -Value 0
 
 # Install Chocolatey
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+Invoke-Expression ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1')) 
 
 # Install OpenVPN
 choco install openvpn --params "'/SELECT_SHORTCUTS=1 /SELECT_ASSOCIATIONS=1'" -y
