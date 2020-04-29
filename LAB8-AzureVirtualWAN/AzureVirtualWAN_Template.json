@@ -16,7 +16,7 @@
         },
         "numberOfInstances": {
             "type": "int",
-            "defaultValue": 2,
+            "defaultValue": 1,
             "minValue": 1,
             "maxValue": 5,
             "metadata": {
@@ -55,31 +55,26 @@
     },
     "variables": {
         "vmLocations": [
-            "West US 2",
             "East US 2"
         ],
         "vNetNames": [
-            "vNetConWest",
             "vNetConEast"
         ],
         "vNetAddressPrefixes": [
-            "15.0.0.0/16",
             "16.0.0.0/16"
         ],
         "vNetSubnets": [
-            "15.0.0.0/24",
             "16.0.0.0/24"
         ],
         "vNetSubnetNames": [
-            "WestSubnet-1",
             "EastSubnet-1"
         ],
         "scriptFolder": ".",
         "scriptFileName": "ConfigureConsoleServers.ps1",
         "Windows": {
-            "publisher": "MicrosoftWindowsDesktop",
-            "offer": "Windows-10",
-            "sku": "rs4-pro",
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2019-Datacenter",
             "version": "latest"
         },
         "imageReference": "[variables(parameters('OS'))]"
