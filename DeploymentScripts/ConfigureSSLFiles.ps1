@@ -10,9 +10,20 @@ Set-NetFirewallProfile -Profile Domain, Public, Private -Enabled False
 #Enable RDP 
 set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
 
-#Enable RDP
-$RDPRegPath = 'HKLM:\System\CurrentControlSet\Control\Terminal Server'
-set-ItemProperty -Path $RDPRegPath -name "fDenyTSConnections" -Value 0
+#Disable OOBE
+$regPath = 'HKLM:\Software\Policies\Microsoft\Windows\OOBE'
+New-Item -Path $regPath -Force
+New-ItemProperty -Path $regPath -Name DisablePrivacyExperience -PropertyType dword -Value 1 -Force
+
+# Disable EDGE Launch
+$regPath = 'HKLM:\Software\Policies\Microsoft\MicrosoftEdge'
+New-Item -Path $regPath -Force
+New-ItemProperty -Path $regPath -Name PreventFirstRunPage -PropertyType dword -Value 1 -Force
+
+#Disable First Logon Animation
+$regPath = 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon'
+New-Item -Path $regPath -Force
+New-ItemProperty -Path $regPath -Name EnableFirstLogonAnimation -PropertyType dword -Value 0 -Force
 
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Confirm:$false -Force
 
