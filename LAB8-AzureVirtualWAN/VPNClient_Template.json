@@ -25,7 +25,7 @@
         },
         "_artifactsLocation": {
             "type": "string",
-            "defaultValue": "https://github.com/billcurtis/AzureNetEssentials1.0/tree/master/DeploymentScripts/"
+            "defaultValue": "https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/development/DeploymentScripts/"
         },
         "_artifactsLocationSasToken": {
             "type": "securestring",
@@ -64,7 +64,7 @@
         "subnet1Prefix": "15.0.0.0/24",
         "subnet1Ref": "[resourceId('Microsoft.Network/virtualNetworks/subnets',variables('virtualNetworkName'),variables('subnet1Name'))]",
         "scriptFolder": ".",
-        "scriptFileName": "ConfigureVPNClient.ps1",
+        "scriptFileName": "ConfigureSSLFiles.ps1",
         "Windows": {
             "publisher": "MicrosoftWindowsDesktop",
             "offer": "Windows-10",
