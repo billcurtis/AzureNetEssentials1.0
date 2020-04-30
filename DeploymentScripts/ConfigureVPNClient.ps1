@@ -14,6 +14,10 @@ set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-
 $RDPRegPath = 'HKLM:\System\CurrentControlSet\Control\Terminal Server'
 set-ItemProperty -Path $RDPRegPath -name "fDenyTSConnections" -Value 0
 
+Invoke-Command -ScriptBlock {
+
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Confirm:$false -Force
+
 # Install Chocolatey
 Invoke-Expression ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1')) 
 
@@ -30,3 +34,5 @@ $rootCertPath = (New-Item 'C:\Users\All Users\Desktop\VPNCertificates\RootCert.t
 Set-Content -Value ((Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/master/DeploymentScripts/Artifacts/P2SClientCertificate.txt' -UseBasicParsing).Content) -LiteralPath $p2sClientCertPath -Force
 Set-Content -Value ((Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/master/DeploymentScripts/Artifacts/P2SClientPrivateKey.txt' -UseBasicParsing).Content) -LiteralPath $p2sClientPrivateKeyPath -Force
 Set-Content -Value ((Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/master/DeploymentScripts/Artifacts/RootCert.txt' -UseBasicParsing).Content) -LiteralPath $rootCertPath -Force
+
+}
