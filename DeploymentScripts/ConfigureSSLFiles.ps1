@@ -16,7 +16,7 @@ New-Item -Path $regPath -Force
 New-ItemProperty -Path $regPath -Name DisablePrivacyExperience -PropertyType dword -Value 1 -Force
 
 # Disable EDGE Launch
-$regPath = 'HKLM:\Software\Policies\Microsoft\MicrosoftEdge'
+$regPath = 'HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Main'
 New-Item -Path $regPath -Force
 New-ItemProperty -Path $regPath -Name PreventFirstRunPage -PropertyType dword -Value 1 -Force
 
@@ -44,3 +44,18 @@ Set-Content -Value ((Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/b
 Set-Content -Value ((Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/master/DeploymentScripts/Artifacts/P2SClientPrivateKey.txt' -UseBasicParsing).Content) -LiteralPath $p2sClientPrivateKeyPath -Force
 Set-Content -Value ((Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/master/DeploymentScripts/Artifacts/RootCert.txt' -UseBasicParsing).Content) -LiteralPath $rootCertPath -Force
 
+# Install Latest Microsoft Edge
+
+choco install microsoft-edge -y
+
+# Create Shortcut for Azure Portal
+
+$TargetPath = "https://portal.azure.com"
+$ShortcutFile = "C:\Users\Public\Desktop\Azure Portal.url"
+$WScriptShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WScriptShell.CreateShortcut($ShortcutFile)
+$Shortcut.TargetPath = $TargetPath
+$Shortcut.Save()
+
+
+# 
