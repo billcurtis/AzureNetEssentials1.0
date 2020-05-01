@@ -58,4 +58,7 @@ $Shortcut.TargetPath = $TargetPath
 $Shortcut.Save()
 
 
-# 
+# Disable Edge First Run Experience 
+regPath = 'HKLM:\Software\Microsoft\Edge'
+New-Item -Path $regPath -Force
+New-ItemProperty -Path $regPath -Name HideFirstRunExperience -PropertyType dword -Value 1 -Force
