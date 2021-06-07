@@ -26,7 +26,7 @@
     },	
    "_artifactsLocation": {
       "type": "string",
-      "defaultValue": "https://networkessentialsscripts.blob.core.windows.net/netessentialsblob"
+      "defaultValue": "https://netessentials.blob.core.windows.net/netessent-blb"
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
