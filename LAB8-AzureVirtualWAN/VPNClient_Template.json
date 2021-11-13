@@ -118,7 +118,7 @@
         {
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('virtualNetworkName')]",
-            "apiVersion": "2016-03-30",
+            "apiVersion": "2020-11-01",
             "location": "[parameters('location')]",
             "properties": {
                 "addressSpace": {
@@ -139,7 +139,7 @@
         {
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat('nic', copyindex(1))]",
-            "apiVersion": "2016-03-30",
+            "apiVersion": "2021-03-01",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "nicLoop",
@@ -168,7 +168,7 @@
         {
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(parameters('vmNamePrefix'), copyIndex(1))]",
-            "apiVersion": "2016-04-30-preview",
+            "apiVersion": "2021-07-01",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "virtualMachineLoop",
@@ -184,7 +184,14 @@
                 "osProfile": {
                     "computerName": "[concat('VPNClient', copyIndex(1))]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "windowsConfiguration": {
+                        "enableAutomaticUpdates": true,
+                        "provisionVmAgent": true,
+                        "patchSettings": {
+                            "enableHotpatching": "[parameters('enableHotpatching')]",
+                            "patchMode": "[parameters('patchMode')]"
+                        }
                 },
                 "storageProfile": {
                     "imageReference": "[variables('imageReference')]",
@@ -192,6 +199,7 @@
                         "createOption": "FromImage"
                     }
                 },
+                "licenseType": "Windows_Client",
                 "networkProfile": {
                     "networkInterfaces": [
                         {
