@@ -67,8 +67,8 @@
         "scriptFileName": "ConfigureSSLFiles.ps1",
         "Windows": {
             "publisher": "MicrosoftWindowsDesktop",
-            "offer": "Windows-11",
-            "sku": "win11-21h2-ent",
+            "offer": "Windows-10",
+            "sku": "19h2-pro",
             "version": "latest"
         },
         "imageReference": "[variables(parameters('OS'))]"
@@ -118,7 +118,7 @@
         {
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('virtualNetworkName')]",
-            "apiVersion": "2020-11-01",
+            "apiVersion": "2016-03-30",
             "location": "[parameters('location')]",
             "properties": {
                 "addressSpace": {
@@ -139,7 +139,7 @@
         {
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat('nic', copyindex(1))]",
-            "apiVersion": "2021-03-01",
+            "apiVersion": "2016-03-30",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "nicLoop",
@@ -168,7 +168,7 @@
         {
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(parameters('vmNamePrefix'), copyIndex(1))]",
-            "apiVersion": "2021-07-01",
+            "apiVersion": "2016-04-30-preview",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "virtualMachineLoop",
@@ -179,19 +179,12 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "Standard_D2_v2"
+                    "vmSize": "Standard_D2_v3"
                 },
                 "osProfile": {
                     "computerName": "[concat('VPNClient', copyIndex(1))]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]",
-                    "windowsConfiguration": {
-                        "enableAutomaticUpdates": true,
-                        "provisionVmAgent": true,
-                        "patchSettings": {
-                            "enableHotpatching": "[parameters('enableHotpatching')]",
-                            "patchMode": "[parameters('patchMode')]"
-                        }
+                    "adminPassword": "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": "[variables('imageReference')]",
@@ -199,7 +192,6 @@
                         "createOption": "FromImage"
                     }
                 },
-                "licenseType": "Windows_Client",
                 "networkProfile": {
                     "networkInterfaces": [
                         {
