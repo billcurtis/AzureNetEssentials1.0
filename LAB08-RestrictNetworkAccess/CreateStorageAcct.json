@@ -12,7 +12,7 @@
     }
   },
   "variables": {
-    "storageAccountName": "[concat(uniqueString(resourceGroup().id),'-CloudShell')]"
+    "storageAccountName": "[concat(uniqueString(resourceGroup().id),'cloudshell')]"
   },
   "resources": [
     {
