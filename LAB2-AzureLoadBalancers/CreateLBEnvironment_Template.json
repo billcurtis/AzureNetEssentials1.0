@@ -26,12 +26,8 @@
     },	
    "_artifactsLocation": {
       "type": "string",
-      "defaultValue": "https://netessentials.blob.core.windows.net/netessent-blb"
+      "defaultValue": "https://raw.githubusercontent.com/billcurtis/AzureNetEssentials1.0/development/DeploymentScripts/"
     },
-    "_artifactsLocationSasToken": {
-      "type": "securestring",
-      "defaultValue": ""
-},
 
 	"vmNamePrefix": {
       "type": "string",
