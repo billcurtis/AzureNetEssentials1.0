@@ -1,6 +1,6 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
-    "contentVersion": "2.0.0.0",
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
 
     "variables": {
         "webAppLocations": [
@@ -14,21 +14,7 @@
     },
     "resources": [
         {
-            "apiVersion": "2015-08-01",
-            "name": "[concat('DemoAppServicePlan', copyIndex())]",
-            "type": "Microsoft.Web/serverfarms",
-            "copy": {
-                "name": "farmloop",
-                "count": "[length(variables('webAppLocations'))]"
-            },
-            "location": "[variables('webAppLocations')[copyIndex()]]",
-            "sku": {
-                "name": "S1",
-                "tier": "Standard"
-            }
-        },
-        {
-            "apiVersion": "2015-08-01",
+            "apiVersion": "2018-11-01",
             "name": "[concat(variables('WebAppPrefix')[copyIndex()], uniqueString(resourceGroup().id))]",
             "type": "Microsoft.Web/sites",
             "copy": {
@@ -36,11 +22,53 @@
                 "count": "[length(variables('webAppLocations'))]"
             },
             "location": "[variables('webAppLocations')[copyIndex()]]",
+            "tags": {},
             "dependsOn": [
                 "[concat('DemoAppServicePlan', copyIndex())]"
             ],
             "properties": {
-                "serverFarmId": "[concat('DemoAppServicePlan', copyIndex())]"
+                "name": "[concat(variables('WebAppPrefix')[copyIndex()], uniqueString(resourceGroup().id))]",
+                "siteConfig": {
+                    "appSettings": [],
+                    "metadata": [
+                        {
+                            "name": "CURRENT_STACK",
+                            "value": "dotnet"
+                        }
+                    ],
+                    "phpVersion": "OFF",
+                    "netFrameworkVersion": "v6.0",
+                    "alwaysOn": true,
+                    "ftpsState": "FtpsOnly"
+                },
+                "serverFarmId": "[concat('DemoAppServicePlan', copyIndex())]",
+                "clientAffinityEnabled": true,
+                "virtualNetworkSubnetId": null,
+                "httpsOnly": true
+            }
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "name": "[concat('DemoAppServicePlan', copyIndex())]",
+            "type": "Microsoft.Web/serverfarms",
+            "copy": {
+                "name": "farmloop",
+                "count": "[length(variables('webAppLocations'))]"
+            },
+            "location": "[variables('webAppLocations')[copyIndex()]]",
+            "kind": "",
+            "tags": {},
+            "dependsOn": [],
+            "properties": {
+                "name": "[concat('DemoAppServicePlan', copyIndex())]",
+                "workerSize": "0",
+                "workerSizeId": "0",
+                "numberOfWorkers": "1",
+                "zoneRedundant": false
+            },
+            "sku": {
+                "Tier": "Standard",
+                "Name": "S1"
             }
         }
     ]
