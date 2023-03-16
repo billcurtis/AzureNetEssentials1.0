@@ -30,8 +30,14 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Confirm:$false -Force
 # Install Chocolatey
 Invoke-Expression ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1')) 
 
-# Install OpenVPN
-choco install openvpn --params "'/SELECT_SHORTCUTS=1 /SELECT_ASSOCIATIONS=1'" -y
+ # Download OpenVPN
+ New-Item -ItemType Directory -Path C:\temp -Force
+ $openVPNuri = 'https://swupdate.openvpn.org/community/releases/OpenVPN-2.5.9-I601-amd64.msi'
+ Invoke-RestMethod -Method Get -Uri $openVPNuri -OutFile 'C:\temp\OpenVPN.msi'
+ Set-Location -Path C:\Temp
+ $expression = "msiexec /i OpenVPN.msi /qb"
+ Invoke-Expression $expression
+
 
 # Create Lab Cert Files
 New-Item 'C:\Users\All Users\VPNCertificates' -ItemType Directory -Force 
