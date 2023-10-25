@@ -66,9 +66,9 @@
         "scriptFolder": ".",
         "scriptFileName": "ConfigureSSLFiles.ps1",
         "Windows": {
-            "publisher": "MicrosoftWindowsDesktop",
-            "offer": "Windows-11",
-            "sku": "23h2-pro",
+            "publisher": "microsoftwindowsdesktop",
+            "offer": "windows-11",
+            "sku": "win11-22h2-pro",
             "version": "latest"
         },
         "imageReference": "[variables(parameters('OS'))]"
