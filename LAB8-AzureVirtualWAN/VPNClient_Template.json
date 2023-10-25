@@ -68,7 +68,7 @@
         "Windows": {
             "publisher": "MicrosoftWindowsDesktop",
             "offer": "Windows-11",
-            "sku": "win11-23h2-pro",
+            "sku": "23h2-pro",
             "version": "latest"
         },
         "imageReference": "[variables(parameters('OS'))]"
