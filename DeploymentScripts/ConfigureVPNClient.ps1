@@ -34,7 +34,6 @@ choco install openvpn --params "'/SELECT_SHORTCUTS=1 /SELECT_ASSOCIATIONS=1'" -y
     Invoke-Expression $expression
 
 
-
     # Create Lab Cert Files
     New-Item 'C:\Users\All Users\VPNCertificates' -ItemType Directory -Force 
     $p2sClientCertPath = (New-Item 'C:\Users\All Users\Desktop\VPNCertificates\P2SClientCertificate.txt' -ItemType File -Force).FullName
