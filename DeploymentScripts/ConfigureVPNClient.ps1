@@ -1,5 +1,5 @@
 
-# Version 1.0  Provision VPN Client
+# Version 2.0  Provision VPN Client
 
 # Sleep as extension has a habit of starting a little too quick.
 Start-Sleep -Seconds 30
@@ -32,7 +32,6 @@ choco install openvpn --params "'/SELECT_SHORTCUTS=1 /SELECT_ASSOCIATIONS=1'" -y
     Set-Location -Path C:\Temp
     $expression = "msiexec /i OpenVPN.msi /qb"
     Invoke-Expression $expression
-
 
 
     # Create Lab Cert Files
